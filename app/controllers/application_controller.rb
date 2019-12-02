@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ApplicationController < ActionController::API
   def not_found
     render json: { error: 'not_found' }, status: :not_found
@@ -8,7 +10,7 @@ class ApplicationController < ActionController::API
   end
 
   def only_for_admin
-    render(status: :forbidden) unless current_user && current_user.admin?
+    render(status: :forbidden) unless current_user&.admin?
   end
 
   def current_user

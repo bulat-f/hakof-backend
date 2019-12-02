@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 class UsersController < ApplicationController
+  before_action :authorize_request, except: %i[create]
   before_action :find_user, except: %i[create index]
 
   # GET /users
@@ -43,8 +46,8 @@ class UsersController < ApplicationController
   def find_user
     @user = User.find(params[:id])
     puts "User with id #{params[:id]}"
-    rescue ActiveRecord::RecordNotFound
-      render json: { errors: 'User not found' }, status: :not_found
+  rescue ActiveRecord::RecordNotFound
+    render json: { errors: 'User not found' }, status: :not_found
   end
 
   def user_params

@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class User < ApplicationRecord
-  enum role: [:regular, :moderator, :admin]
+  enum role: %i[regular moderator admin]
 
   has_secure_password
   validates :email, presence: true, uniqueness: true
@@ -12,11 +14,12 @@ class User < ApplicationRecord
 
   def token
     return @token if @token
+
     @token_expiration = 30.days.from_now
     @token = JsonWebToken.encode({ user_id: id }, @token_expiration)
   end
 
   def token_expiration
-    @token_expiration.strftime("%d-%m-%Y %H:%M")
+    @token_expiration&.strftime('%d-%m-%Y %H:%M')
   end
 end
