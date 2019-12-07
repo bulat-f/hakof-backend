@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
 class AuthenticationController < ApplicationController
-  before_action :authorize_request, except: :login
-
   # POST /auth/login
   def login
-    @user = User.find_by_email(params[:email])
-    if @user&.authenticate(params[:password])
+    @user = User.find_by_email(login_params[:email])
+    if @user&.authenticate(login_params[:password])
       json = UserBlueprint.render(@user, view: :auth)
       render json: json, status: :ok
     else

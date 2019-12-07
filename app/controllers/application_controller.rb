@@ -9,22 +9,27 @@ class ApplicationController < ActionController::API
     render(status: :unauthorized) unless current_user
   end
 
-  def only_for_admin
+  def check_admin
     render(status: :forbidden) unless current_user&.admin?
   end
 
   def current_user
     return @current_user if @current_user
 
-    header = request.headers['Authorization']
-    header = header.split(' ').last if header
     begin
-      @decoded = JsonWebToken.decode(header)
+      @decoded = JsonWebToken.decode(auth_token)
       @current_user = User.find(@decoded[:user_id])
     rescue ActiveRecord::RecordNotFound => e
       nil
     rescue JWT::DecodeError => e
       nil
     end
+  end
+
+  def auth_token
+    return @auth_token if @auth_token
+
+    header = request.headers['Authorization']
+    @auth_token = header.split(' ').last if header
   end
 end

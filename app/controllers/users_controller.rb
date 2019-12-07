@@ -3,6 +3,7 @@
 class UsersController < ApplicationController
   before_action :authorize_request, except: %i[create]
   before_action :find_user, except: %i[create index]
+  before_action :check_self_or_admin, only: %i[update destroy]
 
   # GET /users
   def index
@@ -30,7 +31,10 @@ class UsersController < ApplicationController
 
   # PUT /users/{id}
   def update
-    unless @user.update(user_params)
+    if @user.update(user_params)
+      json = UserBlueprint.render @user, view: :extended
+      render json: json, status: :ok
+    else
       render json: { errors: @user.errors.full_messages },
              status: :unprocessable_entity
     end
@@ -45,7 +49,6 @@ class UsersController < ApplicationController
 
   def find_user
     @user = User.find(params[:id])
-    puts "User with id #{params[:id]}"
   rescue ActiveRecord::RecordNotFound
     render json: { errors: 'User not found' }, status: :not_found
   end
@@ -54,5 +57,9 @@ class UsersController < ApplicationController
     params.permit(
       :first_name, :last_name, :email, :password, :password_confirmation
     )
+  end
+
+  def check_self_or_admin
+    render(status: :forbidden) unless @user.id == current_user.id || current_user.admin?
   end
 end
