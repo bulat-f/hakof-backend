@@ -21,7 +21,7 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     if @user.save
-      json = UserBlueprint.render @user, view: :extended
+      json = UserBlueprint.render @user, view: :auth
       render json: json, status: :created
     else
       render json: { errors: @user.errors.full_messages },
