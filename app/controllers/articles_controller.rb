@@ -2,7 +2,7 @@ class ArticlesController < ApplicationController
   before_action :find_article, except: %i[index]
 
   def index
-    @articles = Article.where(lang: params[:lang])
+    @articles = Article.where(lang: params[:lang]).order(published_at: :desc)
     json = ArticleBlueprint.render @articles, view: :normal
     render json: json
   end
