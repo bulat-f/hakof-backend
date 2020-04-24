@@ -11,6 +11,8 @@ class ArticleBlueprint < Blueprinter::Base
   view :extended do
     include_view :normal
     fields :body
+    association :author, blueprint: UserBlueprint
+    association :comments, blueprint: CommentBlueprint
   end
 
   view :with_stats do

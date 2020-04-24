@@ -2,9 +2,10 @@
 
 class UserBlueprint < Blueprinter::Base
   identifier :id
+  fields :first_name, :last_name
 
   view :normal do
-    fields :first_name, :last_name, :email, :role
+    fields :email, :role
   end
 
   view :extended do
